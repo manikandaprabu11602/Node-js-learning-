@@ -1,20 +1,17 @@
+// routes/itemRoutes.js
 const express = require('express');
 const router = express.Router();
 const itemController = require('../controllers/itemController');
+const upload = require('../middleware/upload'); // Import the upload middleware
 
-// Create a new item
-router.post('/items', itemController.createItem);
+// Create a new item with image upload
+router.post('/items', upload.single('image'), itemController.createItem);
 
-// Get all items
+// Update an item by ID with image upload
+router.put('/items/:id', upload.single('image'), itemController.updateItemById);
+
 router.get('/items', itemController.getItems);
-
-// Get a single item by ID
 router.get('/items/:id', itemController.getItemById);
-
-// Update an item by ID
-router.put('/items/:id', itemController.updateItemById);
-
-// Delete an item by ID
 router.delete('/items/:id', itemController.deleteItemById);
 
 module.exports = router;

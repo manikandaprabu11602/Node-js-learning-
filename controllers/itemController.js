@@ -1,9 +1,14 @@
 const Item = require('../models/Item');
+const path = require('path');
 
 // Create a new item
 exports.createItem = async (req, res) => {
-  const newItem = new Item(req.body);
   try {
+    const image = req.file ? req.file.path : ''; // Get image path if uploaded
+    const newItem = new Item({
+      ...req.body,
+      image: image, // Add image path to item
+    });
     const savedItem = await newItem.save();
     res.status(201).json({
       success: true,
@@ -52,9 +57,11 @@ exports.getItemById = async (req, res) => {
 // Update an item by ID
 exports.updateItemById = async (req, res) => {
   try {
-    const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const updateData = {
+      ...req.body,
+      image: req.file ? req.file.path : undefined, // Update image path if new image is uploaded
+    };
+    const updatedItem = await Item.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (updatedItem == null) {
       return res.status(404).json({
         success: false,
